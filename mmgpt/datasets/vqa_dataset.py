@@ -33,10 +33,11 @@ class VQAPrompter:
     def __call__(self, question, options=None):
         if options:
             options = ", ".join(options)
-            res = TEMPLATE["prompt_choice"].format(image="<image>", question=question, options=options)
+            return TEMPLATE["prompt_choice"].format(
+                image="<image>", question=question, options=options
+            )
         else:
-            res = TEMPLATE["prompt_qa"].format(image="<image>", question=question)
-        return res
+            return TEMPLATE["prompt_qa"].format(image="<image>", question=question)
 
     def get_response(self, output: str) -> str:
         return output.split(TEMPLATE["response_split"])[-1].strip()
@@ -82,10 +83,7 @@ class VQADataset(Dataset):
         image_list = defaultdict(list)
         for ann in annotation:
             image_list[ann["image"]].append(ann)
-        # image_name_list = list(image_list.keys())
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def __len__(self):
@@ -107,7 +105,7 @@ class VQADataset(Dataset):
 
         answer_weight = {}
         for answer in ann["answer"]:
-            if answer in answer_weight.keys():
+            if answer in answer_weight:
                 answer_weight[answer] += 1 / len(ann["answer"])
             else:
                 answer_weight[answer] = 1 / len(ann["answer"])
@@ -220,8 +218,7 @@ class ConcatDataset(ConcatDataset):
         for s in samples:
             shared_keys = shared_keys & set(s.keys())
 
-        samples_shared_keys = []
-        for s in samples:
-            samples_shared_keys.append({k: s[k] for k in s.keys() if k in shared_keys})
-
+        samples_shared_keys = [
+            {k: s[k] for k in s.keys() if k in shared_keys} for s in samples
+        ]
         return self.datasets[0].collater(samples_shared_keys)

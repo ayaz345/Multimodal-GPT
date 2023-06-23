@@ -18,7 +18,7 @@ def get_cast_dtype(precision: str):
 def get_autocast(precision):
     if precision == "amp":
         return torch.cuda.amp.autocast
-    elif precision == "amp_bfloat16" or precision == "amp_bf16":
+    elif precision in ["amp_bfloat16", "amp_bf16"]:
         # amp_bfloat16 is more stable than amp float16 for clip training
         return lambda: torch.cuda.amp.autocast(dtype=torch.bfloat16)
     else:
@@ -219,7 +219,7 @@ def train_one_epoch(
 
 def get_checkpoint(model: torch.nn.Module):
     state_dict = model.state_dict()
-    parameters = {k: v for k, v in model.named_parameters()}
+    parameters = dict(model.named_parameters())
     # remove duplicate parameters
     duplicate_keys = set(state_dict.keys()) - set(parameters.keys())
     for k in duplicate_keys:

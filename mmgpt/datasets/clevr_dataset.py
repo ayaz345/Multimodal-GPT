@@ -35,9 +35,7 @@ class CLEVRDataset(VQADataset):
         image_list = defaultdict(list)
         for ann in annotation:
             image_list[ann["image_filename"]].append(ann)
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def process_text(self, ann):

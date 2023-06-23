@@ -19,11 +19,11 @@ class AOKVQADataset(VQADataset):
 
     def process_text(self, ann):
         question = ann["question"]
-        question = question + " " + random.choice(REASON_QUESTIONS)
+        question = f"{question} {random.choice(REASON_QUESTIONS)}"
 
         choices = ann["choices"]
         true_answer = choices[ann["correct_choice_idx"]]
-        answer = "The answer is " + true_answer + ". Because " + " ".join(ann["rationales"])
+        answer = f"The answer is {true_answer}. Because " + " ".join(ann["rationales"])
 
         is_option = random.random() < self.option_prob and len(choices) > 1
         if is_option:

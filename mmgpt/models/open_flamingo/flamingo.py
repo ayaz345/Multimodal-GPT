@@ -74,7 +74,7 @@ class Flamingo(nn.Module):
             use_cache: whether to use cached key values. See use_cache
                 documentation in Hugging Face CausalLM models.
         """
-        if vision_x is None and use_cached_vision_x is False:
+        if vision_x is None and not use_cached_vision_x:
             for layer in self.lang_encoder._get_decoder_layers():
                 layer.condition_only_lang_x(True)
             output = self.lang_encoder(

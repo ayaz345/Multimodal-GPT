@@ -45,7 +45,7 @@ class TextOCRDataset(VQADataset):
 
         answer_weight = {}
         for answer in ann["answers"]:
-            if answer in answer_weight.keys():
+            if answer in answer_weight:
                 answer_weight[answer] += 1 / len(ann["answers"])
             else:
                 answer_weight[answer] = 1 / len(ann["answers"])
