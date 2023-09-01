@@ -51,8 +51,7 @@ class DollyDataset(Dataset):
 
     def load_annotation(self, ann_path):
         self.annotation = []
-        for line in open(ann_path, "r").readlines():
-            self.annotation.append(json.loads(line))
+        self.annotation.extend(json.loads(line) for line in open(ann_path, "r"))
 
     def __len__(self):
         return len(self.annotation)

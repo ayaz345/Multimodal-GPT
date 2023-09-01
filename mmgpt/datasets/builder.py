@@ -117,10 +117,9 @@ def build_dataset(dataset_config, **kwargs):
     else:
         raise NotImplementedError
 
-    if sample > 0:
-        random_indices = np.random.choice(len(dataset), min(sample, len(dataset)), replace=False)
-        subsample_dataset = torch.utils.data.Subset(dataset, random_indices)
-        subsample_dataset.collater = dataset.collater
-        return subsample_dataset
-    else:
+    if sample <= 0:
         return dataset
+    random_indices = np.random.choice(len(dataset), min(sample, len(dataset)), replace=False)
+    subsample_dataset = torch.utils.data.Subset(dataset, random_indices)
+    subsample_dataset.collater = dataset.collater
+    return subsample_dataset

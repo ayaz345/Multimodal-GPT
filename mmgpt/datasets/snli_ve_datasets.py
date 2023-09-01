@@ -50,7 +50,7 @@ class SNLIVEDataset(VQADataset):
         annotation = []
         for ann_path in ann_paths:
             with open(ann_path, "r") as f:
-                for line in f.readlines():
+                for line in f:
                     line = line.strip()
                     if len(line) != 0:
                         ann = json.loads(line)
@@ -61,9 +61,7 @@ class SNLIVEDataset(VQADataset):
         image_list = defaultdict(list)
         for ann in annotation:
             image_list[ann["Flickr30K_ID"]].append(ann)
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def process_text(self, ann):

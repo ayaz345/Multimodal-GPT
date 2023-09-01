@@ -35,9 +35,7 @@ class GQADataset(VQADataset):
         image_list = defaultdict(list)
         for ann in annotation:
             image_list[ann["imageId"]].append(ann)
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def process_text(self, ann):
@@ -48,11 +46,7 @@ class GQADataset(VQADataset):
 
         # TODO: check which one is better
         # Random select answer or full_answer
-        if random.random() < self.answer_prob:
-            select_answer = full_answer
-        else:
-            select_answer = answer
-
+        select_answer = full_answer if random.random() < self.answer_prob else answer
         instruction = self.prompter(question)
         return dict(instruction=instruction, answer=select_answer)
 

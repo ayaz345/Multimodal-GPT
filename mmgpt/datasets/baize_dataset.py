@@ -15,10 +15,11 @@ class LangDialPrompter:
     def __call__(self, question, options=None):
         if options:
             options = ", ".join(options)
-            res = TEMPLATE["prompt_choice"].format(image="<image>", question=question, options=options)
+            return TEMPLATE["prompt_choice"].format(
+                image="<image>", question=question, options=options
+            )
         else:
-            res = TEMPLATE["prompt_dial"].format(question=question)
-        return res
+            return TEMPLATE["prompt_dial"].format(question=question)
 
     def get_response(self, output: str) -> str:
         return output.split(TEMPLATE["response_split"])[-1].strip()
@@ -80,7 +81,10 @@ class BaiZeDataset(DollyDataset):
             instruction.append(res["instruction"])
             answer.append(res["answer"])
 
-        res = dict(
-            input_ids=input_ids, attention_mask=attention_mask, labels=labels, instruction=instruction, answer=answer
+        return dict(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            labels=labels,
+            instruction=instruction,
+            answer=answer,
         )
-        return res

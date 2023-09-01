@@ -88,9 +88,7 @@ class Inferencer:
             )[0]
         generated_text = self.tokenizer.decode(
             output_ids, skip_special_tokens=True)
-        # print(generated_text)
-        result = generated_text.split(response_split)[-1].strip()
-        return result
+        return generated_text.split(response_split)[-1].strip()
 
 
 class PromptGenerator:
@@ -103,7 +101,7 @@ class PromptGenerator:
         sep: str = "\n\n### ",
         buffer_size=0,
     ):
-        self.all_history = list()
+        self.all_history = []
         self.ai_prefix = ai_prefix
         self.user_prefix = user_prefix
         self.buffer_size = buffer_size
@@ -114,20 +112,16 @@ class PromptGenerator:
         self.all_history.append([role, message])
 
     def get_images(self):
-        img_list = list()
         if self.buffer_size > 0:
             all_history = self.all_history[-2 * (self.buffer_size + 1):]
         elif self.buffer_size == 0:
             all_history = self.all_history[-2:]
         else:
             all_history = self.all_history[:]
-        for his in all_history:
-            if type(his[-1]) == tuple:
-                img_list.append(his[-1][-1])
-        return img_list
+        return [his[-1][-1] for his in all_history if type(his[-1]) == tuple]
 
     def get_prompt(self):
-        format_dict = dict()
+        format_dict = {}
         if "{user_prefix}" in self.prompt_template:
             format_dict["user_prefix"] = self.user_prefix
         if "{ai_prefix}" in self.prompt_template:
@@ -364,7 +358,7 @@ if __name__ == "__main__":
         llama_path=llama_path,
         open_flamingo_path=open_flamingo_path,
         finetune_path=finetune_path)
-    init_memory = str(round(torch.cuda.memory_allocated() / 1024**3, 2)) + 'GB'
+    init_memory = f'{str(round(torch.cuda.memory_allocated() / 1024**3, 2))}GB'
     demo = build_conversation_demo()
     demo.queue(concurrency_count=3)
     IP = "0.0.0.0"

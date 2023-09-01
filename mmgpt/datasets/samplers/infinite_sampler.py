@@ -10,7 +10,7 @@ class InfiniteSampler(Sampler):
     def __init__(self, dataset: int, shuffle: bool = True, seed: int = 0):
         self._size = len(dataset)
         self._shuffle = shuffle
-        self._seed = int(seed)
+        self._seed = seed
         _, rank, world_size = world_info_from_env()
 
         self._rank = rank

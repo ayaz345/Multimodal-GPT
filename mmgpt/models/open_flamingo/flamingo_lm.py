@@ -110,7 +110,7 @@ class FlamingoLMMixin(nn.Module):
         if not self.initialized_flamingo:
             raise ValueError("Flamingo layers are not initialized. Please call `init_flamingo` first.")
 
-        input_ids = kwargs["input_ids"] if "input_ids" in kwargs else input[0]
+        input_ids = kwargs.get("input_ids", input[0])
         media_locations = input_ids == self.media_token_id
         attend_previous = (random.random() < 0.5) if self.use_media_placement_augmentation else False
 

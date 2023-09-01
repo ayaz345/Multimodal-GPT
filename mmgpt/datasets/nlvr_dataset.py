@@ -59,7 +59,7 @@ class NLVRv1Dataset(VQADataset):
                 raise ValueError(f"Unknown split for {ann_path}")
 
             with open(ann_path, "r") as f:
-                for line in f.readlines():
+                for line in f:
                     line = line.strip()
                     if len(line) != 0:
                         ann = json.loads(line)
@@ -73,9 +73,7 @@ class NLVRv1Dataset(VQADataset):
         for ann in annotation:
             img_key = f"{ann['split']}-{ann['identifier']}"
             image_list[img_key].append(ann)
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def process_text(self, ann):
@@ -112,10 +110,7 @@ class NLVRv2Dataset(VQADataset):
         image_list = defaultdict(list)
         for ann in annotation:
             image_list[ann["images"][0]].append(ann)
-        # image_name_list = list(image_list.keys())
-        annotation = []
-        for ann_list in image_list.values():
-            annotation.append(random.choice(ann_list))
+        annotation = [random.choice(ann_list) for ann_list in image_list.values()]
         return annotation
 
     def process_text(self, ann):
@@ -144,17 +139,13 @@ class NLVRv2Dataset(VQADataset):
         sentence = samples["sentence"]
         image0, image1 = samples["image0"], samples["image1"]
 
-        if "left" not in sentence and "right" not in sentence:
-            if random.random() < 0.5:
-                image0, image1 = image1, image0
-        else:
-            if random.random() < 0.5:
+        if random.random() < 0.5:
+            if "left" in sentence or "right" in sentence:
                 sentence = sentence.replace("left", "[TEMP_TOKEN]")
                 sentence = sentence.replace("right", "left")
                 sentence = sentence.replace("[TEMP_TOKEN]", "right")
 
-                image0, image1 = image1, image0
-
+            image0, image1 = image1, image0
         samples["sentence"] = sentence
         samples["image0"] = image0
         samples["image1"] = image1
